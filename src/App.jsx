@@ -9,6 +9,7 @@ import { data as dataGirls0to5 } from "./data/girls_weight_percentages_age_0_to_
 import { data as dataBoys5to10 } from "./data/boys_weight_percentages_age_5_to_10.js";
 import { data as dataBoys0to5 } from "./data/boys_weight_percentages_age_0_to_5.js";
 import { interpretDob } from "./dateLogic.js";
+import { PercentileCalculator } from "./PercentileCalculator.jsx";
 
 const skipFirstLine = true;
 const allDataGirls = [
@@ -25,67 +26,16 @@ const labelStyle = "block text-lg font-bold mb-2";
 
 function App() {
   const [age, setAge] = useState(undefined); // age in months
-  const [weight, setWeight] = useState("");
   const [result, setResult] = useState([undefined, undefined]);
 
   return (
     <>
-      <main className="flex flex-col items-center justify-center min-h-screen p-4">
-        <h1 className="pb-10">Weight Percentile Calculator</h1>
-        <label className={labelStyle} htmlFor="age">
-          Date of Birth or Age
-        </label>
-        <input
-          className={inputStyle}
-          id="age"
-          onChange={debounce((e) => {
-            setAge(interpretAge(e.target.value));
-          }, 1000)}
-        ></input>
-        <label className={labelStyle} htmlFor="weight">
-          Weight
-        </label>
-        <input
-          className={inputStyle}
-          id="weight"
-          onChange={(e) => setWeight(e.target.value)}
-          value={weight}
-        ></input>
-        <button
-          id="calculate_weight"
-          onClick={() => {
-            let resultString = [];
-            for (const dataset of [
-              { gender: "girls", data: allDataGirls },
-              { gender: "boys", data: allDataBoys },
-            ]) {
-              const result = calculateWeightPercentile(
-                age,
-                weight,
-                dataset.data
-              );
-              const wp = result.percentile;
-              if (result.error) {
-                setResult([result.error, ""]);
-                return;
-              }
-              const resultStringForGender = wp
-                ? `This Person's weight is in the ${wp}${getOrdinalSuffix(
-                    wp
-                  )} percentile for ${dataset.gender} of this age.`
-                : `Cannot calculate percentile for this age and weight for ${dataset.gender}. Expected a weight between ${result.lowerBound}, and ${result.upperBound}`;
-              resultString.push(resultStringForGender);
-            }
-            setResult(resultString);
-          }}
-        >
-          Go
-        </button>
-        <p className="text-2xl font-bold ">
-          {age ? `Assuming age of ${formatAge(age)}` : ""}
-        </p>
-        <p className="text-2xl font-bold">{result[0]} </p>
-        <p className="text-2xl font-bold">{result[1]} </p>
+      <main>
+        <PercentileCalculator
+          allData={{ boys: allDataBoys, girls: allDataGirls }}
+          title="Weight Percentile Calculator"
+          measure="Weight"
+        />
       </main>
       <footer className="p-20 text-sm text-gray-300 ">
         Age-weight data is from the World Health Organisation. It is not

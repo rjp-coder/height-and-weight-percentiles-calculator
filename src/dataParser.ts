@@ -80,6 +80,7 @@ export function calculateWeightPercentile(
   weight,
   allData: DataRow[]
 ) {
+  console.assert(ageInMonths > 0);
   ageInMonths = Math.round(ageInMonths);
   if (!weight) return { error: "Need to specify weight" };
   const row = allData.find((d) => d.lifeInMonths === ageInMonths);
@@ -94,7 +95,7 @@ export function calculateWeightPercentile(
     };
   }
 
-  let w1 = row.percentiles.findIndex((p) => weight <= p);
+  let w1 = row.percentiles.findIndex((p) => +weight <= p);
   if (w1 === -1) {
     console.warn(
       `Weight ${weight} not found in percentiles for age ${ageInMonths} months`
