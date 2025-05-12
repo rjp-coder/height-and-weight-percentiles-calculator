@@ -1,17 +1,20 @@
-import { debounce } from "lodash";
 import { useRef, useState } from "react";
 import { interpretDob } from "./dateLogic";
 import "./App.css";
-import { calculateWeightPercentile } from "./dataParser";
 
 const inputStyle = "border-2 border-gray-300 rounded-md mb-2";
 const labelStyle = "block text-lg font-bold mb-2";
 
-export const PercentileCalculator = ({ allData, title, measure }) => {
+export const PercentileCalculator = ({
+  allData,
+  title,
+  measure,
+  calculationMethod,
+}) => {
   const [age, setAge] = useState(""); // age in months
-  const [weight, setWeight] = useState("");
+  const [val, setVal] = useState(""); //weight or height
   const [result, setResult] = useState(undefined);
-  let interpretedAge = useRef(0);
+  const interpretedAge = useRef(0);
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="pb-10">{title}</h1>
@@ -24,22 +27,22 @@ export const PercentileCalculator = ({ allData, title, measure }) => {
         value={age}
       />
       <LabelledInput
-        label="Weight"
-        onChange={(e) => setWeight(e.target.value)}
-        value={weight}
+        label={measure}
+        onChange={(e) => setVal(e.target.value)}
+        value={val}
       />
       <button
         id={`calculate_${measure}`}
         onClick={() => {
           const result = {};
-          result.boys = calculateWeightPercentile(
+          result.boys = calculationMethod(
             interpretedAge.current,
-            weight,
+            val,
             allData.boys
           );
-          result.girls = calculateWeightPercentile(
+          result.girls = calculationMethod(
             interpretedAge.current,
-            weight,
+            val,
             allData.girls
           );
           setResult(result);
@@ -86,6 +89,7 @@ export function interpretAge(val) {
     const ageInMonths = Math.floor(
       (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24 * 30)
     );
+    //FIXME There appears to be a bug where at 1am the month will overflow
     return ageInMonths;
   }
 
@@ -133,7 +137,6 @@ export function formatAge(ageInMonths) {
   }
   const years = Math.floor(ageInMonths / 12);
   const months = ageInMonths % 12;
-  console.log(years, months);
   if (months % 1 == 0) {
     return `${years} years, ${months} months`;
   } else {

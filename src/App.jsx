@@ -1,40 +1,85 @@
-import { useEffect, useState } from "react";
-import { debounce } from "lodash";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import { parseData, calculateWeightPercentile } from "./dataParser.js";
-import { data as dataGirls5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
-import { data as dataGirls0to5 } from "./data/girls_weight_percentages_age_0_to_5.js";
-import { data as dataBoys5to10 } from "./data/boys_weight_percentages_age_5_to_10.js";
-import { data as dataBoys0to5 } from "./data/boys_weight_percentages_age_0_to_5.js";
+import { data as dataBoysHeight0to2 } from "./data/boys_height_percentages_age_0_to_2.js";
+import { data as dataBoysHeight2to5 } from "./data/boys_height_percentages_age_2_to_5.js";
+import { data as dataBoysHeight5to19 } from "./data/boys_height_percentages_age_5_to_19.js";
+import { data as dataBoysWeight0to5 } from "./data/boys_weight_percentages_age_0_to_5.js";
+import { data as dataBoysWeight5to10 } from "./data/boys_weight_percentages_age_5_to_10.js";
+import { data as dataGirlsHeight0to2 } from "./data/girls_height_percentages_age_0_to_2.js";
+import { data as dataGirlsHeight2to5 } from "./data/girls_height_percentages_age_2_to_5.js";
+import { data as dataGirlsHeight5to19 } from "./data/girls_height_percentages_age_5_to_19.js";
+import { data as dataGirlsWeight0to5 } from "./data/girls_weight_percentages_age_0_to_5.js";
+import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
+import { calculatePercentile, parseData } from "./dataParser.js";
 import { interpretDob } from "./dateLogic.js";
 import { PercentileCalculator } from "./PercentileCalculator.jsx";
 
 const skipFirstLine = true;
-const allDataGirls = [
-  ...parseData(dataGirls0to5, skipFirstLine, false, [4, 14]),
-  ...parseData(dataGirls5to10, skipFirstLine, true),
-];
-const allDataBoys = [
-  ...parseData(dataBoys0to5, skipFirstLine, false, [4, 14]),
-  ...parseData(dataBoys5to10, skipFirstLine, true),
-];
-
-const inputStyle = "border-2 border-gray-300 rounded-md mb-2";
-const labelStyle = "block text-lg font-bold mb-2";
+const allData = {
+  girls: {
+    height: [
+      ...parseData(
+        dataGirlsHeight0to2,
+        skipFirstLine,
+        false,
+        [4, 5, 9, 15, -1]
+      ),
+      ...parseData(
+        dataGirlsHeight2to5,
+        skipFirstLine,
+        false,
+        [4, 5, 9, 15, -1]
+      ),
+      ...parseData(
+        dataGirlsHeight5to19,
+        skipFirstLine,
+        false,
+        [4, 5, 9, 15, -1]
+      ),
+    ],
+    weight: [
+      ...parseData(dataGirlsWeight0to5, skipFirstLine, false, [4, 14]),
+      ...parseData(dataGirlsWeight5to10, skipFirstLine, true),
+    ],
+  },
+  boys: {
+    height: [
+      ...parseData(dataBoysHeight0to2, skipFirstLine, false, [4, 5, 9, 15, -1]),
+      ...parseData(dataBoysHeight2to5, skipFirstLine, false, [4, 5, 9, 15, -1]),
+      ...parseData(
+        dataBoysHeight5to19,
+        skipFirstLine,
+        false,
+        [4, 5, 9, 15, -1]
+      ),
+    ],
+    weight: [
+      ...parseData(dataBoysWeight0to5, skipFirstLine, false, [4, 14]),
+      ...parseData(dataBoysWeight5to10, skipFirstLine, true),
+    ],
+  },
+};
 
 function App() {
-  const [age, setAge] = useState(undefined); // age in months
-  const [result, setResult] = useState([undefined, undefined]);
-
+  globalThis.allData = allData;
   return (
     <>
       <main>
         <PercentileCalculator
-          allData={{ boys: allDataBoys, girls: allDataGirls }}
+          allData={{ boys: allData.boys.weight, girls: allData.girls.weight }}
           title="Weight Percentile Calculator"
           measure="Weight"
+          calculationMethod={(ageInMonths, weight, allData) =>
+            calculatePercentile(ageInMonths, weight, "weight", allData)
+          }
+        />
+
+        <PercentileCalculator
+          allData={{ boys: allData.boys.height, girls: allData.girls.height }}
+          title="Height Percentile Calculator"
+          measure="Height"
+          calculationMethod={(ageInMonths, height, allData) =>
+            calculatePercentile(ageInMonths, height, "height", allData)
+          }
         />
       </main>
       <footer className="p-20 text-sm text-gray-300 ">
