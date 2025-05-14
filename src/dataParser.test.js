@@ -2,6 +2,7 @@ import {
   removeYearMonth,
   parseData,
   interpretPercentageKey,
+  getPrecisePercentile,
 } from "./dataParser"; // Adjust the import path as necessary
 
 describe("dataParser", () => {
@@ -9,21 +10,21 @@ describe("dataParser", () => {
     const data = `Month L M S 1st 3rd 5th 15th 25th 50th 75th 85th 95th 97th 99th
 61 -0.4681 18.2579 0.14295 13.4 14.2 14.6 15.8 16.6 18.3 20.2 21.3 23.4 24.3 26.2`;
     const expected = {
-      Month: 61,
-      L: -0.4681,
-      M: 18.2579,
-      S: 0.14295,
-      "1st": 13.4,
-      "3rd": 14.2,
-      "5th": 14.6,
-      "15th": 15.8,
-      "25th": 16.6,
-      "50th": 18.3,
-      "75th": 20.2,
-      "85th": 21.3,
-      "95th": 23.4,
-      "97th": 24.3,
-      "99th": 26.2,
+      Month: "61",
+      L: "-0.4681",
+      M: "18.2579",
+      S: "0.14295",
+      "1st": "13.4",
+      "3rd": "14.2",
+      "5th": "14.6",
+      "15th": "15.8",
+      "25th": "16.6",
+      "50th": "18.3",
+      "75th": "20.2",
+      "85th": "21.3",
+      "95th": "23.4",
+      "97th": "24.3",
+      "99th": "26.2",
     };
     const result = parseData(data)[0]; // Assuming parseData returns an array
     expect(result).toEqual(expected);
@@ -89,6 +90,11 @@ describe("interpretPercentageKey", () => {
     ["P999", 99.9],
   ])("should interpret percentage key %s as %d", (key, expected) => {
     expect(interpretPercentageKey(key)).toEqual(expected);
+  });
+  it("should interpret non-percentage keys as undefined", () => {
+    expect(interpretPercentageKey("L")).toEqual(undefined);
+    expect(interpretPercentageKey("M")).toEqual(undefined);
+    expect(interpretPercentageKey("S")).toEqual(undefined);
   });
 });
 

@@ -157,7 +157,7 @@ const Result = ({ age, measure, result }) => {
       ? `This Person's ${measure} is in the ${wp}${getOrdinalSuffix(
           wp
         )} percentile for ${key} of this age.`
-      : `Cannot calculate percentile for this age and ${measure} for ${key}. Expected a weight between ${result.lowerBound}, and ${result.upperBound}`;
+      : `Cannot calculate percentile for this age and ${measure} for ${key}. Expected a weight between ${result.lowestPossibleValue}, and ${result.highestPossibleValue}`;
     resultStrings.push(resultStringForGender);
   }
   return (

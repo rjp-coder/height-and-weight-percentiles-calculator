@@ -148,39 +148,48 @@ export function calculatePercentile(
       )} years (${allData.at(-1).lifeInMonths} months)`,
     };
   }
+  const rowPercentiles = [];
+  for (let key in row) {
+    const percentageKey = interpretPercentageKey(key);
+    if (percentageKey) {
+      rowPercentiles[percentageKey] = row[key];
+    }
+  }
 
-  let w1 = row.percentiles.findIndex((p) => +measurement <= p);
-  if (w1 === -1) {
+  const rowPercentileKeys = Object.keys(rowPercentiles);
+
+  let m1 = rowPercentileKeys.findIndex(
+    (k) => +measurement <= rowPercentiles[k]
+  );
+  if (!m1) {
     console.warn(
-      `Weight ${measurement} not found in percentiles for age ${ageInMonths} months`
+      `${measurementLabel} ${measurement} not found in percentiles for age ${ageInMonths} months`
     );
-    w1 = row.percentiles.at(-1);
+    const lastKey = rowPercentileKeys.length - 1;
+    m1 = lastKey;
   }
-  let w0 = Math.max(w1 - 1, 0);
+  let m0 = Math.max(m1 - 1, 0);
 
-  const lowerEnd = row.percentiles[w0];
-  const upperEnd = row.percentiles[w1];
+  const lowerEndKey = rowPercentiles[m0];
+  const upperEndKey = rowPercentiles[m1];
 
-  if (row.percentiles.length !== percentiles.length) {
-    console.log(row);
-    throw new Error(
-      `Percentiles length mismatch: expected ${percentiles.length}, got ${row.percentiles.length}`
-    );
-  }
-
-  const lowerPercentile = percentiles[w0];
-  const upperPercentile = percentiles[w1];
+  const lowerPercentile = rowPercentiles[lowerEndKey];
+  const upperPercentile = rowPercentiles[upperEndKey];
 
   const p = getPrecisePercentile(
     lowerPercentile,
-    lowerEnd,
+    lowerEndKey,
     upperPercentile,
-    upperEnd,
+    upperEndKey,
     measurement
   );
+
+  const k0 = rowPercentileKeys[0];
+  const kLast = rowPercentileKeys.at(-1);
+
   return {
-    lowerBound: row.percentiles[0],
-    upperBound: row.percentiles.at(-1),
+    lowestPossibleValue: rowPercentiles[k0],
+    highestPossibleValue: rowPercentiles[kLast],
     percentile: p,
     error: null,
   };
