@@ -154,9 +154,11 @@ const Result = ({ age, measure, result }) => {
   for (let key in result) {
     const wp = result?.[key]?.percentile;
     const resultStringForGender = wp
-      ? `This Person's ${measure} is in the ${wp}${getOrdinalSuffix(
-          wp
-        )} percentile for ${key} of this age.`
+      ? `This Person's ${measure} is in the ${Math.round(wp)}${getOrdinalSuffix(
+          Math.round(wp)
+        )} percentile ${
+          wp != Math.round(wp) ? `(${wp})` : ""
+        } for ${key} of this age.`
       : `Cannot calculate percentile for this age and ${measure} for ${key}. Expected a weight between ${result.lowestPossibleValue}, and ${result.highestPossibleValue}`;
     resultStrings.push(resultStringForGender);
   }
