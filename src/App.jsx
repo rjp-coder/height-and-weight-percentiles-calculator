@@ -9,58 +9,46 @@ import { data as dataGirlsHeight2to5 } from "./data/girls_height_percentages_age
 import { data as dataGirlsHeight5to19 } from "./data/girls_height_percentages_age_5_to_19.js";
 import { data as dataGirlsWeight0to5 } from "./data/girls_weight_percentages_age_0_to_5.js";
 import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
-import { calculatePercentile, parseData } from "./dataParser.js";
+import {
+  calculatePercentile,
+  parseData,
+  removeYearMonth,
+} from "./dataParser.js";
 import { interpretDob } from "./dateLogic.js";
 import { PercentileCalculator } from "./PercentileCalculator.jsx";
 
-const skipFirstLine = true;
-const allData = {
-  girls: {
-    height: [
-      ...parseData(
-        dataGirlsHeight0to2,
-        skipFirstLine,
-        false,
-        [4, 5, 9, 15, -1]
-      ),
-      ...parseData(
-        dataGirlsHeight2to5,
-        skipFirstLine,
-        false,
-        [4, 5, 9, 15, -1]
-      ),
-      ...parseData(
-        dataGirlsHeight5to19,
-        skipFirstLine,
-        false,
-        [4, 5, 9, 15, -1]
-      ),
-    ],
-    weight: [
-      ...parseData(dataGirlsWeight0to5, skipFirstLine, false, [4, 14]),
-      ...parseData(dataGirlsWeight5to10, skipFirstLine, true),
-    ],
-  },
-  boys: {
-    height: [
-      ...parseData(dataBoysHeight0to2, skipFirstLine, false, [4, 5, 9, 15, -1]),
-      ...parseData(dataBoysHeight2to5, skipFirstLine, false, [4, 5, 9, 15, -1]),
-      ...parseData(
-        dataBoysHeight5to19,
-        skipFirstLine,
-        false,
-        [4, 5, 9, 15, -1]
-      ),
-    ],
-    weight: [
-      ...parseData(dataBoysWeight0to5, skipFirstLine, false, [4, 14]),
-      ...parseData(dataBoysWeight5to10, skipFirstLine, true),
-    ],
-  },
-};
+function getData() {
+  return {
+    girls: {
+      height: [
+        ...parseData(dataGirlsHeight0to2),
+        ...parseData(dataGirlsHeight2to5),
+        ...parseData(dataGirlsHeight5to19),
+      ],
+      weight: [
+        ...parseData(dataGirlsWeight0to5),
+        ...parseData(removeYearMonth(dataGirlsWeight5to10)),
+      ],
+    },
+    boys: {
+      height: [
+        ...parseData(dataBoysHeight0to2),
+        ...parseData(dataBoysHeight2to5),
+        ...parseData(dataBoysHeight5to19),
+      ],
+      weight: [
+        ...parseData(dataBoysWeight0to5),
+        ...parseData(removeYearMonth(dataBoysWeight5to10)),
+      ],
+    },
+  };
+}
+
+const allData = getData();
+globalThis.allData = allData;
 
 function App() {
-  globalThis.allData = allData;
+  globalThis.getAllData = getData.bind(this);
   return (
     <>
       <main>

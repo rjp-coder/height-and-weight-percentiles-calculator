@@ -67,60 +67,64 @@ export function removeYearMonth(rawData) {
   return parsedData.join("\n") + (trailingCharacter ? trailingCharacter : "");
 }
 
-export function parseData(
-  rawData,
-  skipFirstLine = false,
-  removeYearMonth = false
-) {
+export function parseData(rawData) {
   if (!rawData) {
     const error = new Error("No data provided to parseData function");
     console.error(error.stack);
     throw error;
   }
-
   let lines = rawData.split("\n").filter((line) => line.trim().length);
 
-  if (skipFirstLine) {
-    lines = lines.slice(1); // Skip the first line if needed
-  }
-  const parsedData: DataRow[] = [];
+  let headerLine = lines[0];
+  const headers = headerLine.split(/\s+/).filter((h) => h.length > 0);
 
-  for (let i = 0; i < lines.length; i++) {
+  const rows: Array<Record<string, number>> = [];
+  for (let i = 1; i < lines.length; i++) {
     //Example line is of format:
-    //Year: Month lifeInMonths L M S 1st 3rd 5th 15th 25th 50th 75th 85th 95th 97th 99th
-    //5: 1 61 -0.4681 18.2579 0.14295 13.4 14.2 14.6 15.8 16.6 18.3 20.2 21.3 23.4 24.3 26.2
-    const line = lines[i];
-    let relevantPartsOfLine = line.trim();
-    if (removeYearMonth) {
-      relevantPartsOfLine = line.split(/[0-9]{1,2}:\s?[0-9]{1,2}/)[1].trim(); // Extract the rest of the line
-    }
-    const partsWithMaybeInsufficientColumns = relevantPartsOfLine.split(/\s+/);
-    if (partsWithMaybeInsufficientColumns.length < 15)
+    //lifeInMonths L M S 1st 3rd 5th 15th 25th 50th 75th 85th 95th 97th 99th
+    //61 -0.4681 18.2579 0.14295 13.4 14.2 14.6 15.8 16.6 18.3 20.2 21.3 23.4 24.3 26.2
+    const line = lines[i].trim();
+    const lineParts = line.split(/\s+/);
+    if (lineParts.length < 15)
       console.warn(`Skipping line due to insufficient data: ${line}`);
-    const parts: Array<string> = [];
 
-    //TODO allow a percentages parameter to be passed into this function
-
-    const lifeInMonths = parseInt(parts[0]);
-    const L = parseFloat(parts[1]);
-    const M = parseFloat(parts[2]);
-    const S = parseFloat(parts[3]);
-    //1st 3rd 5th 15th 25th 50th 75th 85th 95th 97th 99th
-    const percentiles = parts.slice(4).map(parseFloat);
-
-    parsedData.push({
-      lifeInMonths,
-      L,
-      M,
-      S,
-      percentiles,
-    });
+    const dataRow: Record<string, number> = {};
+    for (let j = 0; j < lineParts.length; j++) {
+      const part = lineParts[j];
+      const key = headers[j];
+      dataRow[key] = part;
+    }
+    if (rows.length % 100) {
+      console.log(rows.length);
+    }
+    rows.push(dataRow);
   }
 
-  return parsedData;
+  return rows;
 }
 
-// const percentiles = [1, 3, 5, 15, 25, 50, 75, 85, 95, 97, 99];
+/** given a key like 'P99' or '50th', return just the number: e.g. 99 or 50 */
+export function interpretPercentageKey(key) {
+  if (
+    key.endsWith("th") ||
+    key.endsWith("st") ||
+    key.endsWith("nd") ||
+    key.endsWith("rd")
+  ) {
+    return parseInt(key.substring(0, key.length - 2));
+  }
+  if (key.toUpperCase().startsWith("P")) {
+    const str = key.replace(/[a-zA-Z]/g, "");
+    const int = parseInt(str);
+    console.log(JSON.stringify({ key, int }));
+    if ((int < 10 && str.length > 1) || (str.length > 2 && int > 100)) {
+      console.log("It's as the prophecy foretold!");
+      // special case, the key has leading zeroes, interpret that as a division by that many zeroes
+      return int / 10;
+    }
+    return int;
+  }
+}
 
 export function calculatePercentile(
   ageInMonths,
