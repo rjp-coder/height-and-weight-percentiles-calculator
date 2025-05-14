@@ -1,9 +1,8 @@
 type DataRow = {
-  lifeInMonths: number;
+  Month: number;
   L: number;
   M: number;
   S: number;
-  percentiles: number[]; // Array of percentiles
 };
 
 export function removeColumns(array, indexes) {
@@ -94,9 +93,6 @@ export function parseData(rawData) {
       const key = headers[j];
       dataRow[key] = part;
     }
-    if (rows.length % 100) {
-      console.log(rows.length);
-    }
     rows.push(dataRow);
   }
 
@@ -116,9 +112,7 @@ export function interpretPercentageKey(key) {
   if (key.toUpperCase().startsWith("P")) {
     const str = key.replace(/[a-zA-Z]/g, "");
     const int = parseInt(str);
-    console.log(JSON.stringify({ key, int }));
     if ((int < 10 && str.length > 1) || (str.length > 2 && int > 100)) {
-      console.log("It's as the prophecy foretold!");
       // special case, the key has leading zeroes, interpret that as a division by that many zeroes
       return int / 10;
     }
@@ -126,26 +120,30 @@ export function interpretPercentageKey(key) {
   }
 }
 
+type Result = {
+  lowestPossibleValue: number;
+  highestPossibleValue: number;
+  percentile: number;
+  error?: string;
+};
+
 export function calculatePercentile(
   ageInMonths,
   measurement,
   measurementLabel,
   allData: DataRow[]
-) {
+): Result | { error: string } {
   console.assert(ageInMonths > 0);
   ageInMonths = Math.round(ageInMonths);
   if (!measurement) return { error: `Need to specify ${measurementLabel}` };
-  const row = allData.find((d) => d.lifeInMonths === ageInMonths);
+  const row = allData.find((d) => +d.Month === ageInMonths);
   if (!row) {
     console.warn(`No data found for age ${ageInMonths} months`);
     console.table(allData);
     return {
-      lowerBound: null,
-      upperBound: null,
-      percentile: null,
       error: `No data could be found for age ${ageInMonths} months. Data is only available up till ${Math.floor(
-        allData.at(-1).lifeInMonths / 12
-      )} years (${allData.at(-1).lifeInMonths} months)`,
+        allData.at(-1).Month / 12
+      )} years (${allData.at(-1).Month} months)`,
     };
   }
   const rowPercentiles = [];
@@ -169,18 +167,21 @@ export function calculatePercentile(
     m1 = lastKey;
   }
   let m0 = Math.max(m1 - 1, 0);
+  if (rowPercentiles[rowPercentileKeys[m1]] === measurement) {
+    m0 = m1;
+  }
 
-  const lowerEndKey = rowPercentiles[m0];
-  const upperEndKey = rowPercentiles[m1];
+  const lowerEndKey = parseFloat(rowPercentileKeys[m0]);
+  const upperEndKey = parseFloat(rowPercentileKeys[m1]);
 
-  const lowerPercentile = rowPercentiles[lowerEndKey];
-  const upperPercentile = rowPercentiles[upperEndKey];
+  const lowerPercentile = +rowPercentiles[lowerEndKey];
+  const upperPercentile = +rowPercentiles[upperEndKey];
 
   const p = getPrecisePercentile(
-    lowerPercentile,
     lowerEndKey,
-    upperPercentile,
+    lowerPercentile,
     upperEndKey,
+    upperPercentile,
     measurement
   );
 
@@ -188,38 +189,39 @@ export function calculatePercentile(
   const kLast = rowPercentileKeys.at(-1);
 
   return {
-    lowestPossibleValue: rowPercentiles[k0],
-    highestPossibleValue: rowPercentiles[kLast],
-    percentile: p,
+    lowestPossibleValue: +rowPercentiles[k0],
+    highestPossibleValue: +rowPercentiles[kLast],
+    percentile: +p,
     error: null,
   };
 }
 
 export function getPrecisePercentile(
-  lowerPercentile,
-  lowerWeight,
-  upperPercentile,
-  upperWeight,
-  weight
+  lowerPercentile: number,
+  lowerMeasure: number,
+  upperPercentile: number,
+  upperMeasure: number,
+  measurementValue: number
 ) {
   const percentileGap = upperPercentile - lowerPercentile;
-  const weightGap = upperWeight - lowerWeight;
+  const weightGap = Math.round((upperMeasure - lowerMeasure) * 1000) / 1000;
   const weightPerPercentile = weightGap / percentileGap;
-  let w = lowerWeight;
-  let p = lowerPercentile;
-  while (w < weight) {
-    w += weightPerPercentile;
-    p++;
+  const weightPerTenthPercentile = weightPerPercentile / 10;
+  let lm1 = lowerMeasure;
+  let lp1 = lowerPercentile;
+  while (lm1 < measurementValue) {
+    lm1 += weightPerTenthPercentile;
+    lp1 += 0.1;
   }
-  const w2 = w - weightPerPercentile;
-  const p2 = p - 1;
+  const lm0 = lm1 - weightPerTenthPercentile;
+  const lp0 = lp1 - 0.1;
 
-  const diff = w - weight;
-  const diff2 = weight - w2;
+  const diff = lm1 - measurementValue;
+  const diff2 = measurementValue - lm0;
 
   if (diff <= diff2) {
-    return p;
+    return Math.round(lp1 * 10) / 10;
   } else {
-    return p2;
+    return Math.round(lp0 * 10) / 10;
   }
 }

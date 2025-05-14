@@ -3,6 +3,7 @@ import {
   parseData,
   interpretPercentageKey,
   getPrecisePercentile,
+  calculatePercentile,
 } from "./dataParser"; // Adjust the import path as necessary
 
 describe("dataParser", () => {
@@ -40,10 +41,14 @@ describe("dataParser", () => {
     /* similarly 28kg is (0.4kg * 20)
     50 + 20 is 70.*/
     [50, 20, 75, 30, 28, 70],
-    /* But for 29kg, (0.4kg * 22 = 28.8kg or  (0.4kg * 23 = 29.2kg) could be the answer. The function
-    picks the nearest one, or if equidistant, the higher one, which in this case is 23.
-    50+23  = 73*/
-    [50, 20, 75, 30, 29, 73],
+    /* But for 29kg, (0.4kg * 22 = 28.8kg or  (0.4kg * 23 = 29.2kg) could be the answer. The answer is exactly 
+    between 22 and 23, so 22.5
+    50+22.5  = 72.5*/
+    [50, 20, 75, 30, 29, 72.5],
+    /* between the extreme values of 99th percentile and 100th. 
+    With a weight gap of 50kg. 20 kg would correspond to two fifths of 1, i.e. 0.4
+    therefore the percentile would be 99.4. */
+    [99, 100, 100, 150, 120, 99.4],
   ])(
     "should be able to get the precise percentile for a given weight",
     (
@@ -142,11 +147,55 @@ describe("removeYearMonth", () => {
     [twoDigitYear, expectedTwoDigitYear],
     [twoDigitMonthYear, expectedTwoDigitMonthYear],
   ])("should remove the year month from input", (input, expected) => {
-    console.log("input", JSON.stringify(input));
-    console.log("output", JSON.stringify(removeYearMonth(input)));
-    console.log("expected", JSON.stringify(expected));
     expect(JSON.stringify(removeYearMonth(input))).toEqual(
       JSON.stringify(expected)
     );
+  });
+});
+
+describe("calculatePercentile", () => {
+  it("should calculate the percentile correctly", () => {
+    const ageInMonths = 61;
+    const weight = 15.0;
+    const allData = [
+      {
+        Month: "61",
+        L: "-0.2026",
+        M: "18.5057",
+        S: "0.12988",
+        "1st": "13.8",
+        "3rd": "14.6",
+        "5th": "15.0",
+        "15th": "16.2",
+        "25th": "17.0",
+        "50th": "18.5",
+        "75th": "20.2",
+        "85th": "21.2",
+        "95th": "23.0",
+        "97th": "23.8",
+        "99th": "25.3",
+      },
+      {
+        Month: "62",
+        L: "-0.2130",
+        M: "18.6802",
+        S: "0.13028",
+        "1st": "13.9",
+        "3rd": "14.7",
+        "5th": "15.1",
+        "15th": "16.4",
+        "25th": "17.1",
+        "50th": "18.7",
+        "75th": "20.4",
+        "85th": "21.4",
+        "95th": "23.3",
+        "97th": "24.0",
+        "99th": "25.6",
+      },
+    ];
+    const result = calculatePercentile(ageInMonths, weight, "weight", allData);
+    expect(result.percentile).toEqual(5);
+    expect(result.lowestPossibleValue).toEqual(13.8);
+    expect(result.highestPossibleValue).toEqual(25.3);
   });
 });
