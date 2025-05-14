@@ -177,13 +177,21 @@ export function calculatePercentile(
   const lowerPercentile = +rowPercentiles[lowerEndKey];
   const upperPercentile = +rowPercentiles[upperEndKey];
 
-  const p = getPrecisePercentile(
-    lowerEndKey,
-    lowerPercentile,
-    upperEndKey,
-    upperPercentile,
-    measurement
-  );
+  let p;
+  try {
+    p = getPrecisePercentile(
+      lowerEndKey,
+      lowerPercentile,
+      upperEndKey,
+      upperPercentile,
+      measurement
+    );
+  } catch (e) {
+    return {
+      error:
+        "A data error has occured. Percentage values for interpolation can have a maximum of 1 decimal places. Please report the error by raising an issue on github.",
+    };
+  }
 
   const k0 = rowPercentileKeys[0];
   const kLast = rowPercentileKeys.at(-1);
@@ -203,25 +211,38 @@ export function getPrecisePercentile(
   upperMeasure: number,
   measurementValue: number
 ) {
+  if (("" + lowerPercentile).length > 3 || ("" + upperPercentile).length > 4) {
+    throw new Error(
+      "Percentile values passed in are not supported when more than one decimal place"
+    );
+  }
   const percentileGap = upperPercentile - lowerPercentile;
   const weightGap = Math.round((upperMeasure - lowerMeasure) * 1000) / 1000;
   const weightPerPercentile = weightGap / percentileGap;
   const weightPerTenthPercentile = weightPerPercentile / 10;
-  let lm1 = lowerMeasure;
-  let lp1 = lowerPercentile;
-  while (lm1 < measurementValue) {
-    lm1 += weightPerTenthPercentile;
-    lp1 += 0.1;
+  let m1 = lowerMeasure;
+  let p1 = lowerPercentile;
+  while (m1 < measurementValue) {
+    // find the first measure that would exceed the target value
+    m1 += weightPerTenthPercentile;
+    // and with it the corresponding percentile
+    p1 += 0.1;
   }
-  const lm0 = lm1 - weightPerTenthPercentile;
-  const lp0 = lp1 - 0.1;
 
-  const diff = lm1 - measurementValue;
-  const diff2 = measurementValue - lm0;
+  // it might be that the measurement before m1 is closer to the target
+  // so define this
+  const m0 = m1 - weightPerTenthPercentile;
+  // and its corresponding percentile
+  const p0 = p1 - 0.1;
 
+  // and check whether m1 is further over the target than m0 is under
+  const diff = m1 - measurementValue;
+  const diff2 = measurementValue - m0;
+
+  // then choose the percentile that would have the smallest diff -- i.e. be the least innacurate
   if (diff <= diff2) {
-    return Math.round(lp1 * 10) / 10;
+    return Math.round(p1 * 10) / 10;
   } else {
-    return Math.round(lp0 * 10) / 10;
+    return Math.round(p0 * 10) / 10;
   }
 }
