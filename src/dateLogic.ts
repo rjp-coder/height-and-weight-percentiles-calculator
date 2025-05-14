@@ -48,4 +48,25 @@ export function validateDateParts(yearPart, monthPart, dayPart) {
 
   return true;
 }
-// function to check if a year is a leap year
+
+export function getTimeTillNowInMonths(dateString: string) {
+  const dob = interpretDob(dateString);
+  if (dob) {
+    const d = new Date(dob);
+    const now = new Date();
+    const tNow = now.getTime();
+    const tThen = d.getTime();
+    const ageInDays = Math.floor((tNow - tThen) / (1000 * 60 * 60 * 24));
+    let fullYears = Math.floor(ageInDays / 365);
+    let remainingDays = ageInDays % 365;
+
+    //This is a crude approximation
+    const AVG_DAYS_IN_A_MONTH = 30.4;
+
+    //
+    const ageInMonths =
+      fullYears * 12 + Math.round(remainingDays / AVG_DAYS_IN_A_MONTH);
+
+    return ageInMonths;
+  }
+}

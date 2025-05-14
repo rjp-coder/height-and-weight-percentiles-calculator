@@ -1,4 +1,10 @@
-import { interpretDob, isLeapYear, validateDateParts } from "./dateLogic";
+import {
+  interpretDob,
+  isLeapYear,
+  validateDateParts,
+  getTimeTillNowInMonths,
+} from "./dateLogic";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("interpretDob", () => {
   it.each([
@@ -47,4 +53,22 @@ describe("validateDateParts", () => {
     expect(validateDateParts(2023, 12, 1)).toBe(false); // Invalid month
     expect(validateDateParts(2023, 11, -1)).toBe(false); // Invalid day
   });
+});
+
+describe("getTimeTillNowInMonths", () => {
+  vi.useFakeTimers();
+  it.each([
+    ["08-02-20", "May 14 2025 13:00:00", 63],
+    ["01-01-20", "February 15 2020 13:00", 1],
+    ["01-01-20", "February 16 2020 13:00", 2],
+  ])(
+    "should return the correct number of months between a given time and now",
+    (dateString, now, expectedNumMonths) => {
+      const date = new Date(now); // 14th May 2025, 13:00
+      vi.setSystemTime(date);
+      const m = getTimeTillNowInMonths(dateString);
+      expect(m).toEqual(expectedNumMonths);
+    }
+  );
+  vi.useRealTimers();
 });

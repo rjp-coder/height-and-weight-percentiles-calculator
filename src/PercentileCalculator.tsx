@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { interpretDob } from "./dateLogic";
+import { interpretDob, getTimeTillNowInMonths } from "./dateLogic";
 import "./App.css";
 
 const inputStyle = "border-2 border-gray-300 rounded-md mb-2";
@@ -82,15 +82,9 @@ export function interpretAge(val) {
     }
   }
 
-  const dob = interpretDob(strVal);
-  if (dob) {
-    const d = new Date(dob);
-    const now = new Date();
-    const ageInMonths = Math.floor(
-      (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24 * 30)
-    );
-    //FIXME There appears to be a bug where at 1am the month will overflow
-    return ageInMonths;
+  const monthsSinceBirth = getTimeTillNowInMonths(val);
+  if (monthsSinceBirth) {
+    return monthsSinceBirth;
   }
 
   const parts = strVal.split(/[,]+/);

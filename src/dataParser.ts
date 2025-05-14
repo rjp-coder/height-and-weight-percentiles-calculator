@@ -139,7 +139,7 @@ export function calculatePercentile(
   const row = allData.find((d) => +d.Month === ageInMonths);
   if (!row) {
     console.warn(`No data found for age ${ageInMonths} months`);
-    console.table(allData);
+    console.log(allData);
     return {
       error: `No data could be found for age ${ageInMonths} months. Data is only available up till ${Math.floor(
         allData.at(-1).Month / 12

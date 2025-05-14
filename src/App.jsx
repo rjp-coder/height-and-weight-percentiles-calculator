@@ -13,8 +13,8 @@ import {
   calculatePercentile,
   parseData,
   removeYearMonth,
-} from "./dataParser.js";
-import { interpretDob } from "./dateLogic.js";
+} from "./dataParser.ts";
+import { interpretDob } from "./dateLogic.ts";
 import { PercentileCalculator } from "./PercentileCalculator.jsx";
 
 function getData() {
