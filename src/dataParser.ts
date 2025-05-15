@@ -1,8 +1,8 @@
 type DataRow = {
-  Month: number;
-  L: number;
-  M: number;
-  S: number;
+  Month: string;
+  L: string;
+  M: string;
+  S: string;
 };
 
 export function removeColumns(array, indexes) {
@@ -120,7 +120,7 @@ export function interpretPercentageKey(key) {
   }
 }
 
-type Result = {
+export type Result = {
   lowestPossibleValue: number;
   highestPossibleValue: number;
   percentile: number;
@@ -128,9 +128,9 @@ type Result = {
 };
 
 export function calculatePercentile(
-  ageInMonths,
-  measurement,
-  measurementLabel,
+  ageInMonths: number,
+  measurement: number,
+  measurementLabel: string,
   allData: DataRow[]
 ): Result | { error: string } {
   console.assert(ageInMonths > 0);
@@ -142,7 +142,7 @@ export function calculatePercentile(
     console.log(allData);
     return {
       error: `No data could be found for age ${ageInMonths} months. Data is only available up till ${Math.floor(
-        allData.at(-1).Month / 12
+        +allData.at(-1).Month / 12
       )} years (${allData.at(-1).Month} months)`,
     };
   }
