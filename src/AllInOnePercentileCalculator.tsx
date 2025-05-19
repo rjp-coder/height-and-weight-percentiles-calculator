@@ -21,7 +21,7 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="pb-10 text-center">Percentile Calculator</h1>
-      <div className="grid grid-cols-3">
+      <div className="grid sm:grid-cols-3">
         <div>
           <LabelledInput
             label="Date of Birth or Age"
@@ -66,7 +66,6 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
           </button>
         </div>
         <CombinedResultBox
-          className="grid grid-cols-2 col-span-2 py-10"
           age={"" + formatAge(interpretedAge.current)}
           result={result}
         />
@@ -102,7 +101,6 @@ type CombinedResult = {
 const CombinedResultBox = ({
   age,
   result,
-  className,
 }: {
   age: string;
   result: CombinedResult;
@@ -113,8 +111,8 @@ const CombinedResultBox = ({
   const { boys, girls } = result;
 
   return (
-    <div className={className}>
-      <p className="col-span-2 text-center text-2xl m-auto">Age {age}</p>
+    <div className="grid sm:grid-cols-2 sm:col-span-2 py-10">
+      <p className="sm:col-span-2 text-center text-2xl m-auto">Age {age}</p>
       <SingleResultBox className="bg-blue-400 " gender="Boys" results={boys} />
       <SingleResultBox
         className="bg-pink-400 "
@@ -128,7 +126,7 @@ const CombinedResultBox = ({
 const SingleResultBox = ({ className, gender, results }) => {
   console.log(results);
   return (
-    <div className={className + " border-4 rounded-xl mx-2"}>
+    <div className={className + " border-4 rounded-xl mx-2 my-2"}>
       <h3 className="text-center">{gender}' percentile</h3>
       {results.height.error || results.weight.error ? (
         <>
