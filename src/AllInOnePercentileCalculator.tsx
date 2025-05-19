@@ -123,29 +123,32 @@ const SingleResultBox = ({ className, gender, results }) => {
   return (
     <div className={className + " border-4 rounded-xl mx-2 my-2"}>
       <h3 className="text-center">{gender}' percentile</h3>
-      {results.height.error || results.weight.error ? (
-        <>
-          <p>{results.height.error}</p>
-          <p>{results.weight.error}</p>
-        </>
-      ) : (
-        <>
-          <h4 className="text-4xl text-center">
-            {Math.round(results.height.percentile)}
-            <span className="text-2xl">
-              {getOrdinalSuffix(Math.round(results.height.percentile))}
-            </span>
-            <span className="text-xs"> for height</span>
-          </h4>
-          <h4 className="text-4xl text-center">
-            {Math.round(results.weight.percentile)}
-            <span className="text-2xl">
-              {getOrdinalSuffix(Math.round(results.weight.percentile))}
-            </span>
-            <span className="text-xs"> for weight</span>
-          </h4>
-        </>
-      )}
+      <>
+        {!results.height.error && (
+          <ResultRow
+            percentile={results.height.percentile}
+            measurement="height"
+          />
+        )}
+        {!results.weight.error && (
+          <ResultRow
+            percentile={results.weight.percentile}
+            measurement="weight"
+          />
+        )}
+      </>
     </div>
+  );
+};
+
+const ResultRow = ({ percentile, measurement }) => {
+  return (
+    <h4 className="text-4xl text-center">
+      {Math.round(percentile)}
+      <span className="text-2xl">
+        {getOrdinalSuffix(Math.round(percentile))}
+      </span>
+      <span className="text-xs"> for {measurement}</span>
+    </h4>
   );
 };
