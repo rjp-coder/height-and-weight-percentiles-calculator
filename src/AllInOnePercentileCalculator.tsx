@@ -1,11 +1,5 @@
 import { useRef, useState } from "react";
-import {
-  interpretDob,
-  getTimeTillNowInMonths,
-  formatAge,
-  getOrdinalSuffix,
-  interpretAge,
-} from "./dateLogic";
+import { formatAge, getOrdinalSuffix, interpretAge } from "./dateLogic";
 import "./App.css";
 import { calculatePercentile, Result } from "./dataParser";
 
@@ -22,7 +16,7 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="pb-10 text-center">Percentile Calculator</h1>
       <div className="grid sm:grid-cols-3">
-        <div>
+        <div className="text-center">
           <LabelledInput
             label="Date of Birth or Age"
             onChange={(e) => {
@@ -31,7 +25,9 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
             }}
             value={age}
           />
-          <p className="text-center">{formatAge(interpretedAge.current)}</p>
+          <p className="text-center italic -mt-5 mb-5">
+            {formatAge(interpretedAge.current)}
+          </p>
           <LabelledInput
             label="Weight"
             onChange={(e) => setWeight(e.target.value)}
@@ -44,7 +40,7 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
           />
           <button
             id="calculate_percentile"
-            className="w-1/1"
+            className="w-4/5 mt-4 border-1 border-gray-300 "
             onClick={() => {
               const result = { boys: {}, girls: {} };
               const measurements = { height, weight };
@@ -78,13 +74,13 @@ const LabelledInput = ({ label, value, onChange }) => {
   return (
     <>
       <label
-        className="block text-lg font-bold mb-2 text-center"
+        className="block text-lg font-bold mb-1 text-center"
         htmlFor={label}
       >
         {label}
       </label>
       <input
-        className="border-2 border-gray-300 rounded-md mb-2 text-center w-1/1"
+        className="border-2 border-gray-300 rounded-md mb-5 m-auto text-center w-4/5"
         id={label}
         onChange={(e) => onChange(e)}
         value={value}
@@ -104,7 +100,6 @@ const CombinedResultBox = ({
 }: {
   age: string;
   result: CombinedResult;
-  className: string;
 }) => {
   if (!result) return null;
 
