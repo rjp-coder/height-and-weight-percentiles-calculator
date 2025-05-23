@@ -8,4 +8,5 @@ export default defineConfig({
     include: ["**/*.test.(js)|(tsx)"],
     globals: true,
   },
+  base: "/height-and-weight-percentiles-calculator/",
 });
