@@ -8,5 +8,5 @@ export default defineConfig({
     include: ["**/*.test.(js)|(tsx)"],
     globals: true,
   },
-  base: "/hwp-calc/",
+  base: "/height-and-weight-percentiles-calculator/",
 });

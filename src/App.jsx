@@ -42,7 +42,7 @@ function getData() {
 const allData = getData();
 globalThis.allData = allData;
 
-export function App() {
+function App() {
   globalThis.getAllData = getData.bind(this);
   return (
     <>
