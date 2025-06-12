@@ -62,3 +62,17 @@ function App() {
 }
 
 export default App;
+
+// TODO try 2 years of ages with weight 2okg and note there's no error
+// TODO Have the initial input be centre aligned then have it move to the left when data is entered
+// TODO ensure the results age is not affected by the inputs and only changes when the GO buton is clicked
+// TODO error messaging, try a question mark for out of range values
+// TODO Add a build number that is updated on each build
+// TODO have github actions build for me
+// TODO add contextual link for results
+// TODO add a table for the results with the data
+// TODO mention the allData.json endpoint in the footer
+// TODO add imperial units accessed via a toggle -- one each for height and weight!
+// TODO for the (or about 1 years and 3 months) text, get rid of the s after years
+// TODO optional -- get the date 1,2,2003 not to be an invalid date
+// TODO rename Invalid age to be Invalid age or date of birth
