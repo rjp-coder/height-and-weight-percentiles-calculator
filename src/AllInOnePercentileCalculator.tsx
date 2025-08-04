@@ -42,7 +42,11 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
             id="calculate_percentile"
             className="w-4/5 mt-4 border-1 border-gray-300 "
             onClick={() => {
-              const result = { boys: {}, girls: {} };
+              const result = {
+                age: interpretedAge.current,
+                boys: {},
+                girls: {},
+              };
               const measurements = { height, weight };
               for (let measure in measurements) {
                 for (let sex of ["boys", "girls"]) {
@@ -61,10 +65,7 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
             Go
           </button>
         </div>
-        <CombinedResultBox
-          age={"" + formatAge(interpretedAge.current)}
-          result={result}
-        />
+        <CombinedResultBox age={"" + formatAge(result?.age)} result={result} />
       </div>
     </section>
   );
