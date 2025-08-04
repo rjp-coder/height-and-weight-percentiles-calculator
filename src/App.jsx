@@ -55,7 +55,7 @@ function App() {
         between the data points, linear interpolation will be used and will not
         be entirely accurate to the curves often shown on the WHO graph. Data
         for 5-10 year olds is from 2007
-        https://www.who.int/tools/growth-reference-data-for-5to19-years/indicators/weight-for-age-5to10-years
+        https://www.who.int/tools/growth-reference-data-for-5to19-years/indicators/weight-for-age-5to10-years.
         The entire dataset used for this site is available here in json format:{" "}
         <a href="/height-and-weight-percentiles-calculator/allData.json">
           All data
