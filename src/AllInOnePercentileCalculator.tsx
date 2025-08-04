@@ -15,7 +15,7 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="pb-10 text-center">Percentile Calculator</h1>
-      <div className="grid sm:grid-cols-3">
+      <div className={`grid ${result ? "sm:grid-cols-3" : "sm:grid-cols-1"}`}>
         <div className="text-center">
           <LabelledInput
             label="Date of Birth or Age"
