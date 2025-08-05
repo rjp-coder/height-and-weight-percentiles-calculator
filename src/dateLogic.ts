@@ -127,7 +127,7 @@ export function interpretAge(val) {
 
 export function formatAge(ageInMonths) {
   if (isNaN(ageInMonths)) {
-    return "Invalid age";
+    return "Invalid age or DOB";
   }
   const years = Math.floor(ageInMonths / 12);
   const months = ageInMonths % 12;

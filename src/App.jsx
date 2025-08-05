@@ -78,4 +78,3 @@ export default App;
 // TODO add imperial units accessed via a toggle -- one each for height and weight!
 // TODO for the (or about 1 years and 3 months) text, get rid of the s after years
 // TODO optional -- get the date 1,2,2003 not to be an invalid date
-// TODO rename Invalid age to be Invalid age or date of birth
