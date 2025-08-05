@@ -11,6 +11,7 @@ import { data as dataGirlsHeight5to19 } from "./data/girls_height_percentages_ag
 import { data as dataGirlsWeight0to5 } from "./data/girls_weight_percentages_age_0_to_5.js";
 import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
 import { parseData, removeYearMonth } from "./dataParser.ts";
+import metadata from "../metadata.json";
 
 function getData() {
   return {
@@ -60,6 +61,8 @@ function App() {
         <a href="/height-and-weight-percentiles-calculator/allData.json">
           All data
         </a>
+        <br />
+        <p className="text-center">{`Version ${metadata.buildMajor}.${metadata.buildMinor}.${metadata.buildRevision} ${metadata.buildTag}`}</p>
       </footer>
     </>
   );
@@ -69,7 +72,6 @@ export default App;
 
 // TODO try 2 years of ages with weight 2okg and note there's no error
 // TODO error messaging, try a question mark for out of range values
-// TODO Add a build number that is updated on each build
 // TODO have github actions build for me
 // TODO add contextual link for results
 // TODO add a table for the results with the data
