@@ -129,13 +129,24 @@ export function formatAge(ageInMonths) {
   if (isNaN(ageInMonths)) {
     return "Invalid age or DOB";
   }
+  ageInMonths = +ageInMonths.toFixed(2);
   const years = Math.floor(ageInMonths / 12);
   const months = ageInMonths % 12;
-  if (months % 1 == 0) {
-    return `${years} years, ${months} months`;
+  console.log({ years, months, ageInMonths });
+  if (+months.toFixed(2) % 1 == 0) {
+    return `${pluralise(years, "year")}, ${pluralise(months, "month")}`;
   } else {
-    return `${
-      Math.round(100 * (ageInMonths / 12)) / 100
-    } years (or about ${years} years, ${Math.round(months)} months)`;
+    const y = +(ageInMonths / 12).toFixed(2);
+    return `${pluralise(y, "year")} (or about ${pluralise(
+      Math.floor(y),
+      "year"
+    )}, ${pluralise(Math.round(months), "month")})`;
   }
+}
+
+function pluralise(val, str) {
+  if (val === 1) {
+    return val + " " + str;
+  }
+  return val + " " + str + "s";
 }
