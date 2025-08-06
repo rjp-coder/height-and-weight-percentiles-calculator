@@ -12,6 +12,7 @@ import { data as dataGirlsWeight0to5 } from "./data/girls_weight_percentages_age
 import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
 import { parseData, removeYearMonth } from "./dataParser.ts";
 import metadata from "../metadata.json";
+import { GridExample } from "./WhoTable.jsx";
 
 function getData() {
   return {
@@ -49,7 +50,9 @@ function App() {
     <>
       <main>
         <AllInOnePercentileCalculator allData={allData} />
+        <GridExample />
       </main>
+
       <footer className="p-20 text-sm text-gray-300 ">
         Age-weight data is from the World Health Organisation. It is not
         guaranteed to be completely accurate. If your height or weight falls

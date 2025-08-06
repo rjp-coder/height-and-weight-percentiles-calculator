@@ -1,1 +1,7 @@
 @import "tailwindcss";
+.highlightedTableRow {
+  background-color: theme("colors.green.200"); /* Light green background */
+}
+.highlightedTableCell {
+  background-color: theme("colors.green.400"); /* Lighter green for cells */
+}
