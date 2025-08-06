@@ -12,7 +12,8 @@ import { data as dataGirlsWeight0to5 } from "./data/girls_weight_percentages_age
 import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_age_5_to_10.js";
 import { parseData, removeYearMonth } from "./dataParser.ts";
 import metadata from "../metadata.json";
-import { GridExample } from "./WhoTable.jsx";
+import { WhoTable } from "./WhoTable.jsx";
+import { useState } from "react";
 
 function getData() {
   return {
@@ -45,12 +46,23 @@ const allData = getData();
 globalThis.allData = allData;
 
 function App() {
+  const [whoTable, setWhoTable] = useState(null);
+  const gridRef = useRef(null);
   globalThis.getAllData = getData.bind(this);
   return (
     <>
       <main>
-        <AllInOnePercentileCalculator allData={allData} />
-        <GridExample />
+        <AllInOnePercentileCalculator
+          allData={allData}
+          setWhoTable={setWhoTable}
+        />
+        <WhoTable
+          ref={gridRef}
+          title={whoTable?.title}
+          dataset={whoTable?.dataset}
+          relevantMonth={whoTable?.relevantMonth}
+          targetValue={whoTable?.targetValue}
+        />
       </main>
 
       <footer className="p-20 text-sm text-gray-300 ">

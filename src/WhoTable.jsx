@@ -3,12 +3,16 @@ import { useState, useMemo, useCallback } from "react";
 import { AgGridReact } from "ag-grid-react";
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
-export const GridExample = ({
-  title = "Bleh mergdjsklfjlds",
-  dataset = globalThis.allData.girls.weight,
-  relevantMonth = 19,
-  targetValue = 5.5,
+export const WhoTable = ({
+  title,
+  dataset,
+  relevantMonth,
+  targetValue,
+  ref,
 }) => {
+  if (!dataset || !dataset.length) {
+    return null;
+  }
   const getCellClass = useCallback(
     (params) => {
       //console.log("params", params);
@@ -110,6 +114,7 @@ export const GridExample = ({
         suppressColumnVirtualisation={true}
         getRowClass={getRowClass}
         onGridReady={onGridReady}
+        ref={ref}
       />
     </div>
   );
