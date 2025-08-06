@@ -72,6 +72,8 @@ export function getTimeTillNowInMonths(dateString: string) {
 }
 
 export function getOrdinalSuffix(num) {
+  if (isNaN(num)) return "";
+  if (num % 1 !== 0) return ""; // no suffix for non-integers
   const suffixes = ["th", "st", "nd", "rd"];
   if (num % 100 >= 11 && num % 100 <= 13) {
     //special case for 11, 12, 13 which always use "th"
