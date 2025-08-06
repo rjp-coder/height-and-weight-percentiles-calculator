@@ -10,8 +10,6 @@ export const AllInOnePercentileCalculator = ({ allData }) => {
   const [result, setResult] = useState(undefined);
   const interpretedAge = useRef(0);
 
-  if (!allData) alert(234);
-
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
       <h1 className="pb-10 text-center">Percentile Calculator</h1>
@@ -145,7 +143,7 @@ const SingleResultBox = ({ className, gender, results }) => {
 const ResultRow = ({ percentile, measurement }) => {
   return (
     <h4 className="text-4xl text-center">
-      {Math.round(percentile)}
+      {percentile < 2 || percentile > 98 ? percentile : Math.round(percentile)}
       <span className="text-2xl">
         {getOrdinalSuffix(Math.round(percentile))}
       </span>

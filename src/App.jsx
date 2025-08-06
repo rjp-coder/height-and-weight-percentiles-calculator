@@ -70,11 +70,9 @@ function App() {
 
 export default App;
 
-// TODO try 2 years of ages with weight 2okg and note there's no error
-// TODO error messaging, try a question mark for out of range values
+// TODO try 2 years of ages with weight 2okg and note there's no error -- note that 2okg at 2 years of age is out of range. Above the 99.9th percentile.
 // TODO have github actions build for me
 // TODO add contextual link for results
 // TODO add a table for the results with the data
 // TODO add imperial units accessed via a toggle -- one each for height and weight!
-// TODO for the (or about 1 years and 3 months) text, get rid of the s after years
 // TODO optional -- get the date 1,2,2003 not to be an invalid date

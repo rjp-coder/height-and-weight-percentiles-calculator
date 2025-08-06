@@ -154,12 +154,18 @@ export function calculatePercentile(
     }
   }
 
-  const rowPercentileKeys = Object.keys(rowPercentiles);
+  /* rowPercentiles is a special array with non-standard indexes,
+  e.g. 0.1. When calling Object keys on an array like this, the keys are
+  not guaranteed to be in order, so we need to sort them.*/
+  const unsortedRowPercentileKeys = Object.keys(rowPercentiles);
+  const rowPercentileKeys = unsortedRowPercentileKeys.sort((a, b) => {
+    return +a - +b;
+  });
 
   let m1 = rowPercentileKeys.findIndex(
     (k) => +measurement <= rowPercentiles[k]
   );
-  if (!m1) {
+  if (m1 === -1) {
     console.warn(
       `${measurementLabel} ${measurement} not found in percentiles for age ${ageInMonths} months`
     );
@@ -195,11 +201,12 @@ export function calculatePercentile(
 
   const k0 = rowPercentileKeys[0];
   const kLast = rowPercentileKeys.at(-1);
+  const percentile = Math.max(Math.min(+kLast, +p), +k0);
 
   return {
     lowestPossibleValue: +rowPercentiles[k0],
     highestPossibleValue: +rowPercentiles[kLast],
-    percentile: +p,
+    percentile,
     error: null,
   };
 }
@@ -211,7 +218,15 @@ export function getPrecisePercentile(
   upperMeasure: number,
   measurementValue: number
 ) {
-  if (("" + lowerPercentile).length > 3 || ("" + upperPercentile).length > 4) {
+  if (lowerPercentile === upperPercentile) {
+    // if the percentiles are the same, we can just return that percentile
+    return lowerPercentile;
+  }
+  const maxAcceptableLength = lowerPercentile > 99 ? 4 : 3; //e.g.  99.9 is 4 characters long and 0.1 is 3 characters long,
+  if (
+    ("" + lowerPercentile).length > maxAcceptableLength ||
+    ("" + upperPercentile).length > maxAcceptableLength
+  ) {
     throw new Error(
       "Percentile values passed in are not supported when more than one decimal place"
     );
