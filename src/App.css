@@ -5,3 +5,7 @@
 .highlightedTableCell {
   background-color: theme("colors.green.400"); /* Lighter green for cells */
 }
+
+section {
+  min-height: 550px; /* Override default min-height which was unreasonably about 900px*/
+}
