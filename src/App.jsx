@@ -13,7 +13,7 @@ import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_ag
 import { parseData, removeYearMonth } from "./dataParser.ts";
 import metadata from "../metadata.json";
 import { WhoTable } from "./WhoTable.jsx";
-import { useState } from "react";
+import { useState, createContext, useRef } from "react";
 
 function getData() {
   return {
@@ -45,6 +45,8 @@ function getData() {
 const allData = getData();
 globalThis.allData = allData;
 
+export const DataContext = createContext();
+
 function App() {
   const [whoTable, setWhoTable] = useState(null);
   const gridRef = useRef(null);
@@ -52,17 +54,16 @@ function App() {
   return (
     <>
       <main>
-        <AllInOnePercentileCalculator
-          allData={allData}
-          setWhoTable={setWhoTable}
-        />
-        <WhoTable
-          ref={gridRef}
-          title={whoTable?.title}
-          dataset={whoTable?.dataset}
-          relevantMonth={whoTable?.relevantMonth}
-          targetValue={whoTable?.targetValue}
-        />
+        <DataContext value={{ allData, whoTable, setWhoTable, gridRef }}>
+          <AllInOnePercentileCalculator />
+          <WhoTable
+            ref={gridRef}
+            title={whoTable?.title}
+            dataset={whoTable?.dataset}
+            relevantMonth={whoTable?.relevantMonth}
+            targetValue={whoTable?.targetValue}
+          />
+        </DataContext>
       </main>
 
       <footer className="p-20 text-sm text-gray-300 ">
@@ -85,7 +86,9 @@ function App() {
 
 export default App;
 
-// TODO try 2 years of ages with weight 2okg and note there's no error -- note that 2okg at 2 years of age is out of range. Above the 99.9th percentile.
+//TODO allData does not include weights for 5-10 year olds
+//TODO table will highlight any old value including the month number, if it coincidentally matches height or weight
+
 // TODO have github actions build for me
 // TODO add contextual link for results
 // TODO add a table for the results with the data

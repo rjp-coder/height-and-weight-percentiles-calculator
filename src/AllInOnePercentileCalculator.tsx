@@ -1,14 +1,16 @@
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { formatAge, getOrdinalSuffix, interpretAge } from "./dateLogic";
 import "./App.css";
 import { calculatePercentile, Result } from "./dataParser";
+import { DataContext } from "./App.jsx";
 
-export const AllInOnePercentileCalculator = ({ allData, setWhoTable }) => {
+export const AllInOnePercentileCalculator = ({}) => {
   const [age, setAge] = useState(""); // age in months
   const [weight, setWeight] = useState(""); //weight
   const [height, setHeight] = useState(""); //height
   const [result, setResult] = useState(undefined);
   const interpretedAge = useRef(0);
+  const allData = useContext(DataContext).allData;
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -42,6 +44,8 @@ export const AllInOnePercentileCalculator = ({ allData, setWhoTable }) => {
             onClick={() => {
               const result = {
                 age: interpretedAge.current,
+                height: height,
+                weight: weight,
                 boys: {},
                 girls: {},
               };
@@ -66,7 +70,8 @@ export const AllInOnePercentileCalculator = ({ allData, setWhoTable }) => {
         <CombinedResultBox
           age={"" + formatAge(result?.age)}
           result={result}
-          setWhoTable={setWhoTable}
+          height={result?.height}
+          weight={result?.weight}
         />
       </div>
     </section>
@@ -99,15 +104,16 @@ type CombinedResult = {
 
 const CombinedResultBox = ({
   age,
+  height,
+  weight,
   result,
-  setWhoTable,
 }: {
   age: string;
+  height: string;
+  weight: string;
   result: CombinedResult;
 }) => {
   if (!result) return null;
-
-  const { boys, girls } = result;
 
   return (
     <div className="grid sm:grid-cols-2 sm:col-span-2 py-10">
@@ -115,21 +121,32 @@ const CombinedResultBox = ({
       <SingleResultBox
         className="bg-blue-400 "
         gender="Boys"
-        results={boys}
-        setWhoTable={setWhoTable}
+        results={result.boys}
+        height={height}
+        weight={weight}
       />
       <SingleResultBox
         className="bg-pink-400 "
         gender="Girls"
-        results={girls}
-        setWhoTable={setWhoTable}
+        results={result.girls}
+        height={height}
+        weight={weight}
       />
     </div>
   );
 };
 
-const SingleResultBox = ({ className, gender, results, setWhoTable }) => {
-  console.log(results);
+const SingleResultBox = ({
+  className,
+  gender,
+  results,
+  height,
+  weight,
+  age,
+}) => {
+  //console.log(results);
+  const setWhoTable = useContext(DataContext).setWhoTable;
+  const allData = useContext(DataContext).allData;
   return (
     <div className={className + " border-4 rounded-xl mx-2 my-2"}>
       <h3 className="text-center">{gender}' percentile</h3>
@@ -140,9 +157,9 @@ const SingleResultBox = ({ className, gender, results, setWhoTable }) => {
               console.log("About to set who table", results);
               setWhoTable({
                 title: `Heights for ${gender.toLowerCase()}`,
-                dataset: globalThis.allData[gender.toLowerCase()].height,
-                relevantMonth: 0,
-                targetValue: results.height.percentile,
+                dataset: allData[gender.toLowerCase()].height,
+                relevantMonth: age,
+                targetValue: height,
               });
             }}
             percentile={results.height.percentile}
@@ -154,9 +171,9 @@ const SingleResultBox = ({ className, gender, results, setWhoTable }) => {
             onClick={() =>
               setWhoTable({
                 title: `Weights for ${gender.toLowerCase()}`,
-                dataset: globalThis.allData[gender.toLowerCase()].weight,
-                relevantMonth: 3,
-                targetValue: 10,
+                dataset: allData[gender.toLowerCase()].weight,
+                relevantMonth: age,
+                targetValue: weight,
               })
             }
             percentile={results.weight.percentile}
