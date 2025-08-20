@@ -87,11 +87,11 @@ export const WhoTable = ({
 
   const autoSizeStrategy = useMemo(() => {
     return {
-      type: "fitCellContents",
+      type: "fitGridWidth",
+      defaultMinWidth: 60,
     };
   }, []);
 
-  //const relevantMonth = 3;
   const getRowClass = useCallback((params) => {
     if (+params.data.Month === +relevantMonth) {
       return "highlightedTableRow";
@@ -104,7 +104,7 @@ export const WhoTable = ({
 
   return (
     // Data Grid will fill the size of the parent container
-    <div style={{ height: 500 }}>
+    <div className="m-4 lg:m-auto max-w-4xl" style={{ height: 500 }}>
       <h2 className="text-2xl text-center mb-4">{title}</h2>
       {/* Ag-Grid React Component */}
       <AgGridReact
