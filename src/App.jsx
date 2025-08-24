@@ -13,7 +13,8 @@ import { data as dataGirlsWeight5to10 } from "./data/girls_weight_percentages_ag
 import { parseData, removeYearMonth } from "./dataParser.ts";
 import metadata from "../metadata.json";
 import { WhoTable } from "./WhoTable.jsx";
-import { useState, createContext, useRef } from "react";
+import { useDebounce } from "./utils.jsx";
+import { useState, createContext, useRef, useEffect } from "react";
 
 function getData() {
   return {
@@ -51,6 +52,19 @@ function App() {
   const [whoTable, setWhoTable] = useState(null);
   const gridRef = useRef(null);
   globalThis.getAllData = getData.bind(this);
+  function resizeGrid() {
+    if (gridRef?.current?.api) {
+      gridRef.current.api.sizeColumnsToFit();
+    }
+  }
+  const debouncedResizeGrid = useDebounce(resizeGrid, 200);
+  useEffect(() => {
+    window.addEventListener("resize", debouncedResizeGrid);
+    // cleanup
+    return () => {
+      window.removeEventListener("resize", debouncedResizeGrid);
+    };
+  }, []);
   return (
     <>
       <main>
