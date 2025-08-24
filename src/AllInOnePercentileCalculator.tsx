@@ -186,11 +186,16 @@ const SingleResultBox = ({
 };
 
 const ResultRow = ({ percentile, measurement, onClick }) => {
+  const displayPercentile =
+    percentile < 2 || percentile > 98 ? percentile : Math.round(percentile);
   return (
-    <h4 onClick={onClick} className="text-4xl text-center cursor-pointer">
-      {percentile < 2 || percentile > 98 ? percentile : Math.round(percentile)}
-      <span className="text-2xl">{getOrdinalSuffix(percentile)}</span>
-      <span className="text-xs"> for {measurement}</span>
-    </h4>
+    <>
+      <h4 onClick={onClick} className="text-4xl text-center cursor-pointer">
+        {displayPercentile}
+        {}
+        <span className="text-2xl">{getOrdinalSuffix(displayPercentile)}</span>
+        <span className="text-xs"> for {measurement}</span>
+      </h4>
+    </>
   );
 };
