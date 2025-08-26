@@ -100,11 +100,10 @@ function App() {
 
 export default App;
 
-//TODO allData does not include weights for 5-10 year olds
 //TODO table will highlight any old value including the month number, if it coincidentally matches height or weight
 
 // TODO have github actions build for me
 // TODO add contextual link for results
-// TODO add a table for the results with the data
+
 // TODO add imperial units accessed via a toggle -- one each for height and weight!
 // TODO optional -- get the date 1,2,2003 not to be an invalid date

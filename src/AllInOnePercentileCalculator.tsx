@@ -68,7 +68,7 @@ export const AllInOnePercentileCalculator = ({}) => {
           </button>
         </div>
         <CombinedResultBox
-          age={"" + formatAge(result?.age)}
+          age={result?.age}
           result={result}
           height={result?.height}
           weight={result?.weight}
@@ -117,13 +117,16 @@ const CombinedResultBox = ({
 
   return (
     <div className="grid sm:grid-cols-2 sm:col-span-2 py-10">
-      <p className="sm:col-span-2 text-center text-2xl m-auto">Age {age}</p>
+      <p className="sm:col-span-2 text-center text-2xl m-auto">
+        Age {"" + formatAge(age)}
+      </p>
       <SingleResultBox
         className="bg-blue-400 "
         gender="Boys"
         results={result.boys}
         height={height}
         weight={weight}
+        age={age}
       />
       <SingleResultBox
         className="bg-pink-400 "
@@ -131,6 +134,7 @@ const CombinedResultBox = ({
         results={result.girls}
         height={height}
         weight={weight}
+        age={age}
       />
     </div>
   );
@@ -142,11 +146,11 @@ const SingleResultBox = ({
   results,
   height,
   weight,
-  age,
+  age: ageInMonths,
 }) => {
   //console.log(results);
-  const setWhoTable = useContext(DataContext).setWhoTable;
-  const allData = useContext(DataContext).allData;
+  const { setWhoTable, allData } = useContext(DataContext);
+
   return (
     <div className={className + " border-4 rounded-xl mx-2 my-2"}>
       <h3 className="text-center">{gender}' percentile</h3>
@@ -158,7 +162,7 @@ const SingleResultBox = ({
               setWhoTable({
                 title: `Heights for ${gender.toLowerCase()}`,
                 dataset: allData[gender.toLowerCase()].height,
-                relevantMonth: age,
+                relevantMonth: ageInMonths,
                 targetValue: height,
               });
             }}
@@ -172,7 +176,7 @@ const SingleResultBox = ({
               setWhoTable({
                 title: `Weights for ${gender.toLowerCase()}`,
                 dataset: allData[gender.toLowerCase()].weight,
-                relevantMonth: age,
+                relevantMonth: ageInMonths,
                 targetValue: weight,
               })
             }
