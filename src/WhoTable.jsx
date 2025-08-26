@@ -1,5 +1,5 @@
 import { AllCommunityModule, ModuleRegistry } from "ag-grid-community";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { AgGridReact } from "ag-grid-react";
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -98,7 +98,7 @@ export const WhoTable = ({
     }
   }, []);
 
-  const onGridReady = (params) => {
+  const scrollToMonth = (params) => {
     params.api.ensureIndexVisible(relevantMonth, "middle"); // Ensure the last row is visible
   };
 
@@ -113,7 +113,8 @@ export const WhoTable = ({
         autoSizeStrategy={autoSizeStrategy}
         suppressColumnVirtualisation={true}
         getRowClass={getRowClass}
-        onGridReady={onGridReady}
+        onGridReady={scrollToMonth}
+        onRowDataUpdated={scrollToMonth}
         ref={ref}
       />
     </div>
