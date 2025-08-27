@@ -149,7 +149,8 @@ const SingleResultBox = ({
   age: ageInMonths,
 }) => {
   //console.log(results);
-  const { setWhoTable, allData } = useContext(DataContext);
+  const { setWhoTableParams, allData } = useContext(DataContext);
+  globalThis.setWhoTable = setWhoTableParams;
 
   return (
     <div className={className + " border-4 rounded-xl mx-2 my-2"}>
@@ -158,8 +159,7 @@ const SingleResultBox = ({
         {!results.height.error && (
           <ResultRow
             onClick={() => {
-              console.log("About to set who table", results);
-              setWhoTable({
+              setWhoTableParams({
                 title: `Heights for ${gender.toLowerCase()}`,
                 dataset: allData[gender.toLowerCase()].height,
                 relevantMonth: ageInMonths,
@@ -173,7 +173,7 @@ const SingleResultBox = ({
         {!results.weight.error && (
           <ResultRow
             onClick={() =>
-              setWhoTable({
+              setWhoTableParams({
                 title: `Weights for ${gender.toLowerCase()}`,
                 dataset: allData[gender.toLowerCase()].weight,
                 relevantMonth: ageInMonths,

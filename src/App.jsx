@@ -49,7 +49,7 @@ globalThis.allData = allData;
 export const DataContext = createContext();
 
 function App() {
-  const [whoTable, setWhoTable] = useState(null);
+  const [whoTableParams, setWhoTableParams] = useState(null);
   const gridRef = useRef(null);
   globalThis.getAllData = getData.bind(this);
   function resizeGrid() {
@@ -68,15 +68,11 @@ function App() {
   return (
     <>
       <main>
-        <DataContext value={{ allData, whoTable, setWhoTable, gridRef }}>
+        <DataContext
+          value={{ allData, whoTableParams, setWhoTableParams, gridRef }}
+        >
           <AllInOnePercentileCalculator />
-          <WhoTable
-            ref={gridRef}
-            title={whoTable?.title}
-            dataset={whoTable?.dataset}
-            relevantMonth={whoTable?.relevantMonth}
-            targetValue={whoTable?.targetValue}
-          />
+          <WhoTable />
         </DataContext>
       </main>
 
