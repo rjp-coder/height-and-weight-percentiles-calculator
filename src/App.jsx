@@ -96,8 +96,6 @@ function App() {
 
 export default App;
 
-//TODO table will highlight any old value including the month number, if it coincidentally matches height or weight
-
 // TODO have github actions build for me
 // TODO add contextual link for results
 

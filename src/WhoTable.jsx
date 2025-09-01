@@ -79,12 +79,10 @@ export const WhoTable = () => {
   };
 
   // Column Definitions: Defines the columns to be displayed.
-  const [colDefs, setColDefs] = useState(
-    columnHeadings.map((heading) => ({
-      field: heading,
-      cellClass: getCellClass,
-    }))
-  );
+  const colDefs = columnHeadings.map((heading) => ({
+    field: heading,
+    cellClass: getCellClass,
+  }));
 
   const autoSizeStrategy = useMemo(() => {
     return {
@@ -93,11 +91,14 @@ export const WhoTable = () => {
     };
   }, []);
 
-  const getRowClass = useCallback((params) => {
-    if (+params.data.Month === +relevantMonth) {
-      return "highlightedTableRow";
-    }
-  }, []);
+  const getRowClass = useCallback(
+    (params) => {
+      if (+params.data.Month === +relevantMonth) {
+        return "highlightedTableRow";
+      }
+    },
+    [relevantMonth]
+  );
 
   const scrollToMonth = (params) => {
     params.api.ensureIndexVisible(relevantMonth, "middle"); // Ensure the last row is visible
